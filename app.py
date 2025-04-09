@@ -24,7 +24,7 @@ def index():
     return render_template('index.html', message="Здесь будет статус ПК", hosts=hosts)
 
 def get_zabbix_data():
-    url = "http://192.168.100.250/zabbix/api_jsonrpc.php"
+    url = "http://192.168.100.250:8080/zabbix/api_jsonrpc.php"
     headers = {
         "Content-Type": "application/json"
     }
