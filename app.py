@@ -8,35 +8,28 @@ app = Flask(__name__)
 def reserve():
     host = request.form['host']
     time = request.form['time']
-    # Здесь нужно обработать резервирование (например, сохранить данные в базе или в файле)
+    # Здесь можно добавить логику для сохранения данных о резервировании (например, в базу данных)
     return f"ПК {host} зарезервирован на {time}"
 
 @app.route('/')
 def index():
-    # В этом месте код для получения данных с Zabbix
-    return render_template('index.html', message="Здесь будет статус ПК")
-
-
-
-
-
-if __name__ == "__main__":
-    app.run(debug=True, port=5001)  # Изменение порта на 5001
-
-
-
+    # Получаем данные с Zabbix
+    hosts = get_zabbix_data()
+    return render_template('index.html', message="Здесь будет статус ПК", hosts=hosts)
 
 def get_zabbix_data():
-    url = "http://your-zabbix-server/zabbix/api_jsonrpc.php"
+    url = url = "http://192.168.100.250/zabbix/api_jsonrpc.php"
     headers = {
         "Content-Type": "application/json"
     }
+    
+    # Авторизация
     data = {
         "jsonrpc": "2.0",
         "method": "user.login",
         "params": {
-            "user": "your-username",
-            "password": "your-password"
+            "user": "Admin",  # Замените на ваш логин
+            "password": "@Hzedcj7nqaab"  # Замените на ваш пароль
         },
         "id": 1
     }
@@ -56,6 +49,10 @@ def get_zabbix_data():
         "id": 2
     }
 
+    # Получение хостов
     response = requests.post(url, headers=headers, data=json.dumps(data))
     hosts = response.json().get("result")
     return hosts
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5001)  # Изменение порта на 5001

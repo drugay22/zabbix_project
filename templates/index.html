@@ -1,41 +1,30 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Статус ПК</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Zabbix Dashboard</title>
 </head>
 <body>
-    <h1>{{ message }}</h1>
-    <!-- Тут будет отображаться информация о ПК -->
+    <h1>Список хостов Zabbix</h1>
+    <p>{{ message }}</p>
+
+    <!-- Выводим данные о хостах -->
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Host ID</th>
+                <th>Host Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for host in hosts %}
+            <tr>
+                <td>{{ host.hostid }}</td>
+                <td>{{ host.name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
-<h1>Статус ПК</h1>
-<table>
-   <thead>
-       <tr>
-           <th>Название ПК</th>
-           <th>Статус</th>
-       </tr>
-   </thead>
-   <tbody>
-       {% for host in hosts %}
-       <tr>
-           <td>{{ host.host }}</td>
-           <td>{{ host.status }}</td>
-       </tr>
-       {% endfor %}
-   </tbody>
-</table>
-<form action="/reserve" method="POST">
-    <label for="host">Выберите ПК:</label>
-    <select name="host" id="host">
-        {% for host in hosts %}
-            <option value="{{ host.host }}">{{ host.host }}</option>
-        {% endfor %}
-    </select>
-    <label for="time">Выберите время:</label>
-    <input type="datetime-local" name="time" id="time" required>
-    <button type="submit">Забронировать</button>
-</form>
 </html>
