@@ -18,7 +18,7 @@ def index():
     return render_template('index.html', message="Здесь будет статус ПК", hosts=hosts)
 
 def get_zabbix_data():
-    url = url = "http://192.168.100.250/zabbix/api_jsonrpc.php"
+    url = "http://192.168.100.250/zabbix/api_jsonrpc.php"
     headers = {
         "Content-Type": "application/json"
     }
@@ -36,7 +36,15 @@ def get_zabbix_data():
 
     # Запрос на авторизацию
     response = requests.post(url, headers=headers, data=json.dumps(data))
-    auth_token = response.json().get("result")
+    if response.status_code != 200:
+        print(f"Error: {response.status_code}, {response.text}")
+        return []  # Возвращаем пустой список в случае ошибки
+
+    try:
+        auth_token = response.json().get("result")
+    except json.JSONDecodeError:
+        print(f"Error: Failed to decode JSON, response: {response.text}")
+        return []
 
     # Запрос на получение хостов
     data = {
@@ -51,7 +59,16 @@ def get_zabbix_data():
 
     # Получение хостов
     response = requests.post(url, headers=headers, data=json.dumps(data))
-    hosts = response.json().get("result")
+    if response.status_code != 200:
+        print(f"Error: {response.status_code}, {response.text}")
+        return []  # Возвращаем пустой список в случае ошибки
+    
+    try:
+        hosts = response.json().get("result")
+    except json.JSONDecodeError:
+        print(f"Error: Failed to decode JSON, response: {response.text}")
+        return []
+
     return hosts
 
 if __name__ == "__main__":
