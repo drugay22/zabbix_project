@@ -23,28 +23,8 @@ def get_zabbix_data():
         "Content-Type": "application/json"
     }
     
-    # Авторизация
-    data = {
-        "jsonrpc": "2.0",
-        "method": "user.login",
-        "params": {
-            "user": "Admin",  # Замените на ваш логин
-            "password": "@Hzedcj7nqaab"  # Замените на ваш пароль
-        },
-        "id": 1
-    }
-
-    # Запрос на авторизацию
-    response = requests.post(url, headers=headers, data=json.dumps(data))
-    if response.status_code != 200:
-        print(f"Error: {response.status_code}, {response.text}")
-        return []  # Возвращаем пустой список в случае ошибки
-
-    try:
-        auth_token = response.json().get("result")
-    except json.JSONDecodeError:
-        print(f"Error: Failed to decode JSON, response: {response.text}")
-        return []
+    # Используйте свой API токен
+    auth_token = "d21afa4160a0826fe5966fdbe71001c19fa6e310fba7beeced2456aa8db2f783"  # Ваш токен из Zabbix
 
     # Запрос на получение хостов
     data = {
@@ -53,23 +33,10 @@ def get_zabbix_data():
         "params": {
             "output": "extend"
         },
-        "auth": auth_token,
+        "auth": auth_token,  # Используем ваш токен
         "id": 2
     }
 
-    # Получение хостов
     response = requests.post(url, headers=headers, data=json.dumps(data))
-    if response.status_code != 200:
-        print(f"Error: {response.status_code}, {response.text}")
-        return []  # Возвращаем пустой список в случае ошибки
-    
-    try:
-        hosts = response.json().get("result")
-    except json.JSONDecodeError:
-        print(f"Error: Failed to decode JSON, response: {response.text}")
-        return []
-
+    hosts = response.json().get("result")
     return hosts
-
-if __name__ == "__main__":
-    app.run(debug=True, port=5001)  # Изменение порта на 5001
